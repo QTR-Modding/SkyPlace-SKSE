@@ -41,5 +41,6 @@
   "Health.DynamicForms.Section": "Health/Dynamic Forms",
   "Health.RetainedResources.Section": "Health/Retained Resources",
   "Input.Binding.DoubleTap": "Double Tap {}",
-  "Placer.AlreadyPlacing": "You are already moving an object"
+  "Placer.AlreadyPlacing": "You are already moving an object",
+  "ObjectGroup.DefaultName": "Object Group"
 }

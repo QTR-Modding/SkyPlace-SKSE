@@ -1,0 +1,14 @@
+[
+  {
+    "ObjectEditorId": "BYOHPlanterSoil"
+  },
+  {
+    "ObjectEditorId": "TreeFloraNirnroot01"
+  },
+  {
+    "ObjectEditorId": "NirnrootEmptyACTIVATOR",
+    "Name": "Root",
+    "Weight": 0.5,
+    "Value": 30
+  }
+]

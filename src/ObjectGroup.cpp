@@ -11,10 +11,12 @@
 
 #include "DynamicForm.h"
 #include "FormManager.h"
+#include "FormsById.h"
 #include "Hooks.h"
 #include "InventoryChest.h"
 #include "Raycast.h"
 #include "Transform.h"
+#include "Translations.h"
 
 namespace {
     std::map<RE::FormID, ObjectGroup::Data> groupsByItem;
@@ -112,6 +114,33 @@ namespace {
         }
 
         return baseObject;
+    }
+
+    std::string GetItemName(
+        RE::TESBoundObject* object,
+        std::size_t objectCount)
+    {
+        if (objectCount != 1 || !object) {
+            return Translations::Get("ObjectGroup.DefaultName");
+        }
+
+        const std::optional<FormsByIdItem> exactData = FormsById::Get(object);
+        if (exactData && exactData->name && !exactData->name->empty()) {
+            return *exactData->name;
+        }
+
+        const char* objectName = object->GetName();
+        if (objectName && objectName[0] != '\0') {
+            return objectName;
+        }
+
+        const std::optional<FormManagerData> configuredData =
+            FormManager::Get(object->GetFormID());
+        if (configuredData && !configuredData->name.empty()) {
+            return configuredData->name;
+        }
+
+        return Translations::Get("ObjectGroup.DefaultName");
     }
 
     void AddObjectValue(const RE::TESBoundObject* object, ObjectGroup::Data& data) {
@@ -330,13 +359,7 @@ bool ObjectGroup::PickUp(const std::vector<RE::ObjectRefHandle>& handles) {
     Data data;
     data.guid = CreateGuid();
     data.meshPath = data.guid + ".nif";
-    data.name = "Object Group";
-    if (references.size() == 1) {
-        const char* objectName = templateObject->GetName();
-        if (objectName && objectName[0] != '\0') {
-            data.name = objectName;
-        }
-    }
+    data.name = GetItemName(templateObject, references.size());
     data.playerFacingYaw = RayCast::GetCameraData().first.z;
     data.preservesPlayerFacing = true;
     data.members.reserve(references.size());

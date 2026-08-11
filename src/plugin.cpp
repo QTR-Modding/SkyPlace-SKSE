@@ -13,6 +13,7 @@
 #include "ScreenLog.h"
 #include "SkyPlaceConfig.h"
 #include "SkyPlaceCursorMenu.h"
+#include "Papyrus.h"
 
 void OnMessage(SKSE::MessagingInterface::Message* message) {
 #ifndef NDEBUG
@@ -40,6 +41,11 @@ SKSEPluginLoad(const SKSE::LoadInterface *skse) {
     SKSE::Init(skse);
     SKSE::GetMessagingInterface()->RegisterListener(OnMessage);
     SetupLog();
+    const SKSE::PapyrusInterface* papyrusInterface = SKSE::GetPapyrusInterface();
+    if (!papyrusInterface || !papyrusInterface->Register(PapyrusAPI::Register)) {
+        logger::critical("Failed to register the Papyrus API");
+        return false;
+    }
     Translations::Install();
     SkyPlaceConfig::Load();
     logger::info("Plugin loaded");

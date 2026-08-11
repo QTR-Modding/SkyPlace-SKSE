@@ -44,5 +44,6 @@
   "Health.RetainedResources.Section": "Saúde/Recursos retidos",
   "Input.Binding.DoubleTap": "Toque duplo em {}",
 
-  "Placer.AlreadyPlacing": "Você já está movendo um objeto"
+  "Placer.AlreadyPlacing": "Você já está movendo um objeto",
+  "ObjectGroup.DefaultName": "Grupo de objetos"
 }
