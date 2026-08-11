@@ -1,6 +1,7 @@
 #include "Papyrus.h"
 
 #include "FormManager.h"
+#include "PlacementItems.h"
 #include "Picker.h"
 #include "Placer.h"
 
@@ -13,7 +14,9 @@ namespace {
         }
 
         RE::TESBoundObject* baseObject = reference->GetBaseObject();
-        return baseObject && FormManager::Get(baseObject->GetFormID()).has_value();
+        return baseObject &&
+            (FormManager::Get(baseObject->GetFormID()).has_value() ||
+                PlacementItems::HasItemForObject(baseObject));
     }
 
     bool PickUpObject(

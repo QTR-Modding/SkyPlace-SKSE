@@ -11,9 +11,9 @@
 
 #include "DynamicForm.h"
 #include "FormManager.h"
-#include "FormsById.h"
 #include "Hooks.h"
 #include "InventoryChest.h"
+#include "PlacementItems.h"
 #include "Raycast.h"
 #include "Transform.h"
 #include "Translations.h"
@@ -122,11 +122,6 @@ namespace {
     {
         if (objectCount != 1 || !object) {
             return Translations::Get("ObjectGroup.DefaultName");
-        }
-
-        const std::optional<FormsByIdItem> exactData = FormsById::Get(object);
-        if (exactData && exactData->name && !exactData->name->empty()) {
-            return *exactData->name;
         }
 
         const char* objectName = object->GetName();
@@ -354,6 +349,23 @@ bool ObjectGroup::PickUp(const std::vector<RE::ObjectRefHandle>& handles) {
     RE::TESBoundObject* templateObject = GetOriginalObject(references.front());
     if (!templateObject) {
         return false;
+    }
+
+    if (references.size() == 1 &&
+        !InventoryChest::ShouldStore(references.front())) {
+        RE::TESObjectMISC* placementItem =
+            PlacementItems::GetItemForObject(templateObject);
+        RE::PlayerCharacter* player = RE::PlayerCharacter::GetSingleton();
+        if (placementItem && player) {
+            const std::int32_t previousCount = player->GetItemCount(placementItem);
+            player->AddObjectToContainer(placementItem, nullptr, 1, nullptr);
+            if (player->GetItemCount(placementItem) <= previousCount) {
+                return false;
+            }
+
+            QueueRemoval({references.front()});
+            return true;
+        }
     }
 
     Data data;

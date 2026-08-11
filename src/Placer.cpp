@@ -17,6 +17,7 @@
 #include "HUD.h"
 #include "Menu.h"
 #include "ObjectGroup.h"
+#include "PlacementItems.h"
 #include "Picker.h"
 #include "Raycast.h"
 #include "Transform.h"
@@ -819,7 +820,8 @@ void Placer::Move(const RE::ObjectRefHandle& handle) {
 }
 
 bool Placer::RequestDrop(RE::TESBoundObject* obj, bool itemRemoved) {
-    if (!ObjectGroup::IsGroupItem(obj) || pendingDropFormID != 0) {
+    if ((!ObjectGroup::IsGroupItem(obj) && !PlacementItems::IsItem(obj)) ||
+        pendingDropFormID != 0) {
         return false;
     }
 
@@ -873,7 +875,7 @@ void Placer::ProcessPendingDrop() {
 
     RE::TESBoundObject* object = RE::TESForm::LookupByID<RE::TESBoundObject>(formID);
     if (!object || !Drop(object, itemRemoved)) {
-        logger::error("Failed to place deferred object group {:08X}", formID);
+        logger::error("Failed to place deferred placement item {:08X}", formID);
     }
 }
 
@@ -923,7 +925,9 @@ void Placer::ProcessPendingMaterializedMove() {
 }
 
 bool Placer::Drop(RE::TESBoundObject* obj, bool itemRemoved) {
-    if (!ObjectGroup::IsGroupItem(obj)) {
+    const bool isGroupItem = ObjectGroup::IsGroupItem(obj);
+    const bool isConfiguredItem = PlacementItems::IsItem(obj);
+    if (!isGroupItem && !isConfiguredItem) {
         return false;
     }
 
@@ -948,7 +952,10 @@ bool Placer::Drop(RE::TESBoundObject* obj, bool itemRemoved) {
     }
 
     std::vector<RE::ObjectRefHandle> materializedHandles;
-    if (!ObjectGroup::Materialize(obj, materializedHandles) || materializedHandles.empty()) {
+    const bool materialized = isGroupItem ?
+        ObjectGroup::Materialize(obj, materializedHandles) :
+        PlacementItems::Materialize(obj, materializedHandles);
+    if (!materialized || materializedHandles.empty()) {
         if (itemRemoved) {
             player->AddObjectToContainer(obj, nullptr, 1, nullptr);
         }
@@ -958,7 +965,9 @@ bool Placer::Drop(RE::TESBoundObject* obj, bool itemRemoved) {
     if (!itemRemoved) {
         player->RemoveItem(obj, 1, RE::ITEM_REMOVE_REASON::kRemove, nullptr, nullptr);
     }
-    ObjectGroup::RetireIfUnused(obj);
+    if (isGroupItem) {
+        ObjectGroup::RetireIfUnused(obj);
+    }
 
     if (!materializedHandles.front().get()) {
         return false;

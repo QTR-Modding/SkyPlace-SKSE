@@ -33,16 +33,22 @@ void DynamicForm::Revive(FormID objId, FormID miscId) {
     if (auto miscTrait = misc->As<RE::TESFullName>()) {
         if (auto objectTrait = object->As<RE::TESFullName>()) {
             miscTrait->SetFullName(objectTrait->GetFullName());
-        } else {
+        } else if (filter) {
             miscTrait->SetFullName(filter->name.c_str());
         }
     }
 
     if (auto miscTrait = misc->As<RE::TESValueForm>()) {
-        miscTrait->value = filter->value;
+        auto objectTrait = object->As<RE::TESValueForm>();
+        miscTrait->value = filter ?
+            filter->value :
+            (objectTrait ? objectTrait->value : 0);
     }
 
     if (auto miscTrait = misc->As<RE::TESWeightForm>()) {
-        miscTrait->weight = filter->weight;
+        auto objectTrait = object->As<RE::TESWeightForm>();
+        miscTrait->weight = filter ?
+            filter->weight :
+            (objectTrait ? objectTrait->weight : 0.0f);
     }
 }

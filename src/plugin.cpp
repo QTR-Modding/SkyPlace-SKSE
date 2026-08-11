@@ -7,7 +7,7 @@
 #include "Picker.h"
 #include "Placer.h"
 #include "FormsByModelPath.h"
-#include "FormsById.h"
+#include "PlacementItems.h"
 #include "Translations.h"
 #include "InputConfig.h"
 #include "ScreenLog.h"
@@ -23,7 +23,7 @@ void OnMessage(SKSE::MessagingInterface::Message* message) {
     if (message->type == SKSE::MessagingInterface::kDataLoaded) {
         SkyPlaceCursorMenu::Register();
         HUD::Install();
-        FormsById::Install();
+        PlacementItems::Install();
         ScreenLog::Install();
     }
     if (

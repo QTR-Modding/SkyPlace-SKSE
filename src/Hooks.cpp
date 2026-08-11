@@ -6,6 +6,7 @@
 #include "InputEventHandler.h"
 #include "Menu.h"
 #include "ObjectGroup.h"
+#include "PlacementItems.h"
 #include "Persistence.h"
 #include "Picker.h"
 #include "Placer.h"
@@ -315,7 +316,8 @@ namespace {
             const RE::NiPoint3* a_rotate = nullptr)
         {
             if (a_reason == RE::ITEM_REMOVE_REASON::kDropping &&
-                ObjectGroup::IsGroupItem(a_item) &&
+                (ObjectGroup::IsGroupItem(a_item) ||
+                    PlacementItems::IsItem(a_item)) &&
                 a_player) {
                 const std::int32_t itemCount = a_player->GetItemCount(a_item);
                 RE::ObjectRefHandle* result = originalFunction(

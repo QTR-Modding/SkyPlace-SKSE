@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include "FormManager.h"
 #include "HUD.h"
+#include "PlacementItems.h"
 #include "Picker.h"
 #include "Placer.h"
 
@@ -130,7 +131,8 @@ bool Shader::IsMovable(const RE::ObjectRefHandle& handle) {
         return false;
     }
 
-    return FormManager::Get(baseObject->GetFormID()).has_value();
+    return FormManager::Get(baseObject->GetFormID()).has_value() ||
+        PlacementItems::HasItemForObject(baseObject);
 }
 
 void Shader::ApplyPickableHighlight(const RE::ObjectRefHandle& handle) {

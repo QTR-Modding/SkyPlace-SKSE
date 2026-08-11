@@ -1,6 +1,5 @@
 #include "FormManager.h"
 #include "FormsByModelPath.h"
-#include "FormsById.h"
 #include "SkyPlaceConfig.h"
 
  std::optional<FormManagerData> FormManager::Get(RE::FormID id) {
@@ -20,22 +19,6 @@
         result.weight = data->weight;
         result.name = data->name;
         result.value = data->value;
-        found = true;
-    }
-
-    if (auto data = FormsById::Get(form)) {
-        if (data->name) {
-            result.name = *data->name;
-        }
-
-        if (data->weight) {
-            result.weight = *data->weight;
-        }
-
-        if (data->value) {
-            result.value = *data->value;
-        }
-
         found = true;
     }
 
