@@ -293,7 +293,6 @@ namespace {
 
         static void Install()
         {
-            SKSE::AllocTrampoline(14);
             auto& trampoline = SKSE::GetTrampoline();
             originalFunction = trampoline.write_call<5>(
                 REL::RelocationID(67315, 68617).address() + REL::Relocate(0x7B, 0x7B), thunk);
@@ -416,7 +415,6 @@ namespace {
 
         static void Install()
         {
-            SKSE::AllocTrampoline(14);
             auto& trampoline = SKSE::GetTrampoline();
             originalFunction = trampoline.write_call<5>(
                 REL::RelocationID(34818, 35727).address() + REL::Relocate(0x112, 0x1ce), thunk);
@@ -439,7 +437,6 @@ namespace {
 
         static void Install()
         {
-            SKSE::AllocTrampoline(14);
             auto& trampoline = SKSE::GetTrampoline();
             originalFunction = trampoline.write_call<5>(
                 REL::RelocationID(34677, 35600).address() + REL::Relocate(0xab, 0xab), thunk);
@@ -469,7 +466,6 @@ namespace {
 
         static void Install()
         {
-            SKSE::AllocTrampoline(14);
             auto& trampoline = SKSE::GetTrampoline();
             const REL::Relocation<std::uintptr_t> function{ REL::RelocationID(51019, 51897) };
             originalFunction =
@@ -481,6 +477,7 @@ namespace {
 
 void Hooks::Install()
 {
+    SKSE::AllocTrampoline(14*6);
     GroupModelHook::Install();
     ProcessQueueHook::Install();
     RemoveItemHook::Install();

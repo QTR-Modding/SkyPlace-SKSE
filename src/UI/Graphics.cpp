@@ -5,6 +5,7 @@
 #include <mutex>
 
 #include "SkyPlaceCursorMenu.h"
+#include "SkyrimMenuFontData.h"
 #include "Texture.h"
 
 namespace {
@@ -16,16 +17,25 @@ namespace {
         "Data/SKSE/Plugins/SkyPlaceAssets/fa-regular-400.ttf",
         "Data/SKSE/Plugins/SkyPlaceAssets/fa-brands-400.ttf"};
 
+    ImFont* AddSkyrimMenuFont(
+        ImGuiIO& io,
+        float fontSize,
+        ImFontConfig& fontConfig) {
+        fontConfig.FontDataOwnedByAtlas = false;
+        return io.Fonts->AddFontFromMemoryTTF(
+            SkyrimMenuFontData::bytes,
+            SkyrimMenuFontData::size,
+            fontSize,
+            &fontConfig);
+    }
+
     ImFont* LoadFont(ImGuiIO& io, float fontSize, bool mergeFontAwesome) {
         ImFontConfig fontConfig{};
         fontConfig.PixelSnapH = true;
-        ImFont* font = io.Fonts->AddFontFromFileTTF(
-            "Data/Interface/SkyrimMenuFont.ttf",
-            fontSize,
-            &fontConfig);
+        ImFont* font = AddSkyrimMenuFont(io, fontSize, fontConfig);
         if (!font) {
             logger::warn(
-                "Could not load SkyrimMenuFont.ttf at {} px; using the ImGui default font",
+                "Could not load the embedded Skyrim menu font at {} px; using the ImGui default font",
                 fontSize);
             font = io.Fonts->AddFontDefault();
         }
